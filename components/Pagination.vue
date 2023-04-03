@@ -5,13 +5,15 @@
   >
     <div class="flex-1 flex justify-between sm:hidden">
       <button
-        @click="prevPageURL ?? $emit('change', prevPageURL)"
+        @click="$emit('change', prevPageURL)"
+        :disabled="!prevPageURL"
         class="cursor-pointer disabled:opacity-50 relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50"
       >
         Previous
       </button>
       <button
         @click="$emit('change', nextPageURL)"
+        :disabled="!nextPageURL"
         class="cursor-pointer disabled:opacity-50 ml-3 relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50"
       >
         Next

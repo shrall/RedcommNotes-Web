@@ -66,10 +66,12 @@
           <div
             v-for="note in notes.data.api_results.data"
             :key="note.id"
-            @click="editNote(note.id, note.title, note.content)"
             class="relative rounded-lg border border-gray-300 bg-white px-6 py-5 shadow-sm flex items-center space-x-3 hover:border-gray-400 focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-indigo-500"
           >
-            <div class="flex-1 min-w-0 cursor-pointer">
+            <div
+              @click="editNote(note.id, note.title, note.content)"
+              class="flex-1 min-w-0 cursor-pointer"
+            >
               <div class="focus:outline-none">
                 <span class="absolute inset-0" aria-hidden="true" />
                 <p class="text-sm font-medium text-gray-900">
@@ -80,6 +82,11 @@
                 </p>
               </div>
             </div>
+            <Icon
+              name="fa:trash"
+              @click="submitDeleteNote(note.id)"
+              class="cursor-pointer text-red-500 hover:opacity-80 absolute right-6"
+            />
           </div>
         </div>
         <Pagination
@@ -195,10 +202,10 @@
                 <div class="flex justify-end">
                   <button
                     type="button"
-                    @click="showNoteForm = false"
+                    @click="submitDeleteNote(selectedID)"
                     class="bg-white py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-black"
                   >
-                    Cancel
+                    Delete
                   </button>
                   <button
                     type="button"
@@ -263,10 +270,10 @@ export default {
       refresh();
     }
     return {
-        link,
-        notes,
-        refresh,
-        refetch
+      link,
+      notes,
+      refresh,
+      refetch,
     };
   },
   data() {
@@ -289,7 +296,7 @@ export default {
       this.refresh();
     },
     editNote(id, title, content) {
-      this.id = id;
+      this.selectedID = id;
       this.title = title;
       this.content = content;
       this.showNoteForm = true;
@@ -317,7 +324,13 @@ export default {
         this.resetVariables();
       });
     },
+    async submitDeleteNote(id) {
+      await $fetch(`http://redcommnotes.test/api/note/${id}`, {
+        method: "DELETE",
+      }).then(() => {
+        this.resetVariables();
+      });
+    },
   },
 };
 </script>
-<script setup></script>
