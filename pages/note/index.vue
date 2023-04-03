@@ -1,103 +1,60 @@
-<!--
-  This example requires Tailwind CSS v2.0+ 
-  
-  This example requires some changes to your config:
-  
-  ```
-  // tailwind.config.js
-  module.exports = {
-    // ...
-    plugins: [
-      // ...
-      require('@tailwindcss/forms'),
-    ],
-  }
-  ```
--->
 <template>
-  <!-- When the mobile menu is open, add `overflow-hidden` to the `body` element to prevent double scrollbars -->
-  <Popover as="template" v-slot="{ open }">
-    <header
-      :class="[
-        open ? 'fixed inset-0 z-40 overflow-y-auto' : '',
-        'bg-white shadow-sm lg:static lg:overflow-y-visible',
-      ]"
+  <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+    <div
+      v-for="note in notes.data.api_results.data.slice(prevCount, nextCount)"
+      :key="note.id"
+      class="relative rounded-lg border border-gray-300 bg-white px-6 py-5 shadow-sm flex items-center space-x-3 hover:border-gray-400 focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-indigo-500"
     >
-      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div
-          class="relative flex justify-between xl:grid xl:grid-cols-12 lg:gap-8"
-        >
-          <div
-            class="flex md:absolute md:left-0 md:inset-y-0 lg:static xl:col-span-2"
-          >
-            <div class="flex-shrink-0 flex items-center">
-              <a href="#">
-                <div class="text-xl">My Notes</div>
-              </a>
-            </div>
-          </div>
-          <div class="min-w-0 flex-1 md:px-8 lg:px-0 xl:col-span-6">
-            <div
-              class="flex items-center px-6 py-4 md:max-w-3xl md:mx-auto lg:max-w-none lg:mx-0 xl:px-0"
-            >
-              <div class="w-full">
-                <label for="search" class="sr-only">Search</label>
-                <div class="relative">
-                  <div
-                    class="pointer-events-none absolute inset-y-0 left-0 pl-3 flex items-center"
-                  >
-                    <Icon class="h-5 w-5 text-gray-400" name="uil:search" />
-                  </div>
-                  <input
-                    id="search"
-                    name="search"
-                    class="block w-full bg-white border border-gray-300 rounded-md py-2 pl-10 pr-3 text-sm placeholder-gray-500 focus:outline-none focus:text-gray-900 focus:placeholder-gray-400 focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-                    placeholder="Search"
-                    type="search"
-                  />
-                </div>
-              </div>
-            </div>
-          </div>
-          <div
-            class="flex items-center justify-end col-span-4"
-          >
-            <a
-              href="#"
-              class="ml-6 inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-            >
-              <Icon name="uil:plus" class="w-5 h-5 bg-indigo-600"/>
-            </a>
-          </div>
+      <div class="flex-1 min-w-0 cursor-pointer">
+        <div class="focus:outline-none">
+          <span class="absolute inset-0" aria-hidden="true" />
+          <p class="text-sm font-medium text-gray-900">
+            {{ note.title }}
+          </p>
+          <p class="text-sm text-gray-500 line-clamp-4">
+            {{ note.content }}
+          </p>
         </div>
       </div>
-    </header>
-  </Popover>
+    </div>
+  </div>
+  <Pagination
+    @change="refetch"
+    :pageLinks="notes.data.api_results.links"
+    :from="notes.data.api_results.from"
+    :to="notes.data.api_results.to"
+    :total="notes.data.api_results.total"
+    :nextPageURL="notes.data.api_results.next_page_url"
+    :prevPageURL="notes.data.api_results.prev_page_url"
+  />
 </template>
 
-<script>
-import {
-  Menu,
-  MenuButton,
-  MenuItem,
-  MenuItems,
-  Popover,
-  PopoverButton,
-  PopoverPanel,
-} from "@headlessui/vue";
+<script setup>
+const link = ref("http://redcommnotes.test/api/note?page1");
+const { pending, data: notes } = useLazyAsyncData("notes", () =>
+  $fetch(`${link.value}`)
+);
 
+const refresh = () => refreshNuxtData("notes");
+
+function refetch(linkURL) {
+  link.value = linkURL;
+  refresh();
+}
+</script>
+<script>
 export default {
-  components: {
-    Menu,
-    MenuButton,
-    MenuItem,
-    MenuItems,
-    Popover,
-    PopoverButton,
-    PopoverPanel,
+  data() {
+    return {
+      prevCount: 0,
+      nextCount: 10,
+    };
   },
-  setup() {
-    return {};
+  methods: {
+    nextPage() {
+      console.log(this.notes);
+    },
+    prevPage() {},
   },
 };
 </script>
