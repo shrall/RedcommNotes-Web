@@ -35,7 +35,7 @@
                   <input
                     v-model="search"
                     @keyup="
-                      refetch(`http://redcommnotes.test/api/note?page1`, search)
+                      refetch(`http://redcomm.shrall.tech/api/note?page1`, search)
                     "
                     id="search"
                     name="search"
@@ -254,7 +254,7 @@ export default {
     TransitionRoot,
   },
   setup() {
-    const link = ref("http://redcommnotes.test/api/note?page1");
+    const link = ref("http://redcomm.shrall.tech/api/note?page1");
     const { pending, data: notes } = useLazyAsyncData("notes", () =>
       $fetch(`${link.value}`)
     );
@@ -303,7 +303,7 @@ export default {
       this.isEditing = true;
     },
     async submitAddNote() {
-      await $fetch("http://redcommnotes.test/api/note", {
+      await $fetch("http://redcomm.shrall.tech/api/note", {
         method: "POST",
         body: {
           title: this.title,
@@ -314,7 +314,7 @@ export default {
       });
     },
     async submitEditNote() {
-      await $fetch(`http://redcommnotes.test/api/note/${this.id}`, {
+      await $fetch(`http://redcomm.shrall.tech/api/note/${this.id}`, {
         method: "PUT",
         body: {
           title: this.title,
@@ -325,7 +325,7 @@ export default {
       });
     },
     async submitDeleteNote(id) {
-      await $fetch(`http://redcommnotes.test/api/note/${id}`, {
+      await $fetch(`http://redcomm.shrall.tech/api/note/${id}`, {
         method: "DELETE",
       }).then(() => {
         this.resetVariables();
